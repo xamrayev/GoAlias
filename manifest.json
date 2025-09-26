@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "AI Shortlinker",
+  "version": "1.0",
+  "permissions": ["storage", "tabs", "activeTab"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "omnibox": { "keyword": "go" },
+  "trial_tokens": [
+    "AiNZXBfKz35fQ+dozzd5/jtJbS+zPfF/++zplKfA1ogECdZqbnfWwufo8S0gDIytxXhokVvPXeaV5itb/bHhsAQAAAB4eyJvcmlnaW4iOiJjaHJvbWUtZXh0ZW5zaW9uOi8vaWhpY2tubWRjbWFoaWNqamZvYWhobGlwYWttZmllYm4iLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElGb3JFeHRlbnNpb24iLCJleHBpcnkiOjE3NjA0ODYzOTl9"
+  ]
+}
