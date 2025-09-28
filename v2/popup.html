@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Shortlinker</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body class="popup">
+    <div class="popup-header">
+        <h2>🔗 AI Shortlinker</h2>
+        <div class="sync-status" id="syncStatus">
+            <span class="status-dot"></span>
+            <span class="status-text">Готов</span>
+        </div>
+    </div>
+
+    <div class="popup-content">
+        <div class="main-actions">
+            <button id="syncButton" class="btn btn-primary">
+                <span class="btn-icon">🔄</span>
+                Синхронизировать закладки
+            </button>
+            
+            <button id="manageButton" class="btn btn-secondary">
+                <span class="btn-icon">⚙️</span>
+                Управление
+            </button>
+        </div>
+
+        <div class="search-demo">
+            <div class="demo-title">💡 Как пользоваться:</div>
+            <div class="demo-example">
+                <code>sl python flask</code> — поиск по папке "python"
+            </div>
+            <div class="demo-example">
+                <code>sl github</code> — поиск во всех закладках
+            </div>
+        </div>
+
+        <div class="recent-section" id="recentSection">
+            <div class="section-title">📚 Последние закладки</div>
+            <div id="recentBookmarks" class="recent-list">
+                <!-- Будет заполнено JavaScript -->
+            </div>
+        </div>
+
+        <div class="stats-section" id="statsSection">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalBookmarks">0</span>
+                    <span class="stat-label">закладок</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalFolders">0</span>
+                    <span class="stat-label">папок</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-footer">
+        <div class="last-sync" id="lastSync">
+            Последняя синхронизация: никогда
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

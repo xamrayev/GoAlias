@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "AI Shortlinker",
+  "version": "1.0",
+  "permissions": ["storage", "tabs", "activeTab"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "omnibox": { "keyword": "go" },
+  "trial_tokens": [
+    "token"
+  ]
+}
