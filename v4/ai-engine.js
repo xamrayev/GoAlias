@@ -4,6 +4,7 @@
 // These functions leverage the native Chrome AI API (if available) for summarization.
 // They are exposed here for clarity but are meant to be used by the AIEngine class.
 
+
 /**
  * Summarizes text into a short headline (e.g., for an alias or primary keyword).
  * Uses Chrome AI Summarizer if available, falls back to first few words.
