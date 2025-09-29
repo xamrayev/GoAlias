@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GoAlias - Управление Алиасами</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="window-frame options-frame">
+        <div class="window-header">
+            <h1>🎯 GoAlias Manager</h1>
+        </div>
+        <div class="window-content">
+            <div class="toolbar top-controls">
+                <input type="text" id="filterInput" placeholder="Поиск по алиасу, описанию, URL..." class="input filter-input">
+                <div class="toolbar-group">
+                    <button id="exportButton" class="button button-secondary">Экспорт JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <button id="importButton" class="button button-secondary">Импорт JSON</button>
+                </div>
+            </div>
+
+            <div id="statusMessage" class="status-message" style="display: none;"></div>
+            
+            <div id="aliasesList" class="bento-grid">
+                <p id="loadingMessage" class="status-message info">Загрузка алиасов...</p>
+            </div>
+
+            <div id="noAliasesMessage" class="status-message info" style="display: none;">
+                Пока нет сохраненных алиасов. Нажмите на иконку GoAlias, чтобы добавить первый!
+            </div>
+
+            <!-- Edit Alias Dialog (Modal) -->
+            <div id="editModal" class="dialog-overlay" style="display: none;">
+                <div class="window-frame dialog-frame">
+                    <div class="window-header dialog-header">
+                        <span>Редактировать Алиас</span>
+                        <button class="button button-secondary dialog-close-button">✖</button>
+                    </div>
+                    <div class="window-content dialog-content">
+                        <div class="status-message error" id="editError" style="display:none;"></div>
+                        <div class="form-group">
+                            <label for="editAliasName">Алиас:</label>
+                            <input type="text" id="editAliasName" class="input" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUrl">URL:</label>
+                            <input type="text" id="editUrl" class="input">
+                        </div>
+                        <div class="form-group">
+                            <label for="editDescription">Описание:</label>
+                            <textarea id="editDescription" class="textarea"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editKeywords">Ключевые слова (через запятую):</label>
+                            <input type="text" id="editKeywords" class="input">
+                        </div>
+                        <div class="form-group">
+                            <label for="editTags">Теги (через запятую):</label>
+                            <input type="text" id="editTags" class="input">
+                        </div>
+                    </div>
+                    <div class="dialog-actions">
+                        <button class="button button-secondary dialog-close-button">Отмена</button>
+                        <button id="saveEditButton" class="button button-primary">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="options.js" type="module"></script>
+</body>
+</html>

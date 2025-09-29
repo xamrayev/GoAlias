@@ -1,0 +1,200 @@
+/* popup.css */
+
+body {
+    font-family: 'Pixelated MS Sans Serif', 'Arial', sans-serif; /* Имитация системного шрифта */
+    margin: 0;
+    padding: 0;
+    background-color: #c0c0c0; /* Основной фон, как в Windows 95 */
+    color: #000000;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    width: 380px; /* Фиксированная ширина попапа */
+}
+
+/* --- Окно (window-frame) --- */
+.window-frame {
+    background-color: #c0c0c0;
+    border: 2px outset #ffffff; /* 3D эффект рамки окна */
+    border-right-color: #808080;
+    border-bottom-color: #808080;
+    /* margin: 10px; */ /* В попапе не нужен внешний margin */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Тень для объема */
+}
+
+.window-header {
+    background-color: #000080; /* Заголовок окна - синяя полоса */
+    color: #ffffff;
+    font-weight: bold;
+    padding: 4px 8px;
+    font-size: 0.9em;
+    text-shadow: 1px 1px #000;
+    border-bottom: 1px solid #c0c0c0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.window-header h1 {
+    font-size: 1.1em; /* Заголовок внутри хедера поменьше */
+    color: #ffffff;
+    text-shadow: 1px 1px #000;
+    margin: 0; /* Убрать внутренние отступы h1 */
+}
+
+.window-content {
+    padding: 10px;
+    background-color: #c0c0c0; /* Внутренний фон окна */
+}
+
+/* --- Элементы формы --- */
+.form-group {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.input,
+.textarea {
+    width: calc(100% - 10px); /* Учитываем padding */
+    padding: 3px 4px;
+    border: 1px inset #808080; /* 3D эффект для поля ввода */
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+    background-color: #ffffff;
+    font-family: 'Pixelated MS Sans Serif', monospace;
+    font-size: 0.9em;
+    box-sizing: border-box; /* Важно для ширины */
+}
+
+.input[readonly] {
+    background-color: #e0e0e0;
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* --- Кнопки --- */
+.button {
+    padding: 6px 12px;
+    border: 2px outset #ffffff; /* 3D эффект кнопки */
+    border-right-color: #808080;
+    border-bottom-color: #808080;
+    background-color: #c0c0c0;
+    font-family: 'Pixelated MS Sans Serif', sans-serif;
+    font-size: 0.9em;
+    cursor: pointer;
+    text-align: center;
+    text-shadow: 1px 1px #ffffff;
+    color: #000000;
+    outline: none;
+    white-space: nowrap; /* Чтобы текст кнопки не переносился */
+}
+
+.button:active {
+    border: 2px inset #808080; /* Эффект нажатия */
+    border-top-color: #000000;
+    border-left-color: #000000;
+    background-color: #b0b0b0;
+    transform: translateY(1px);
+}
+
+.button:hover {
+    filter: brightness(1.1);
+}
+
+.button:disabled {
+    color: #808080;
+    background-color: #c0c0c0;
+    border: 2px outset #d0d0d0;
+    border-right-color: #a0a0a0;
+    border-bottom-color: #a0a0a0;
+    cursor: not-allowed;
+    filter: none;
+    text-shadow: none; /* Убрать тень для disabled */
+}
+
+/* Варианты кнопок */
+.button-primary { }
+.button-secondary { }
+.button-danger {
+    background-color: #800000; /* Красная кнопка для удаления */
+    color: #ffffff;
+    text-shadow: 1px 1px #000;
+}
+.button-danger:hover { background-color: #a00000; }
+.button-danger:active { background-color: #600000; }
+
+/* --- Статус сообщения и ошибки --- */
+.error-message {
+    color: #800000;
+    font-size: 0.8em;
+    margin-top: 2px;
+    display: block;
+}
+
+.status-message {
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid;
+    background-color: #e0e0e0;
+    font-size: 0.8em;
+    text-align: center;
+    box-shadow: 1px 1px 0 #808080;
+}
+
+.status-message.info {
+    border-color: #000080;
+    color: #000080;
+}
+
+.status-message.success {
+    border-color: #008000;
+    color: #008000;
+}
+
+.status-message.error {
+    border-color: #800000;
+    color: #800000;
+}
+
+/* --- Расположение элементов внутри попапа --- */
+.keywords-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.keywords-group label {
+    flex-basis: 100%;
+}
+
+.keywords-group .input {
+    flex-grow: 1;
+    margin-right: 0px; /* Убираем, если input и button находятся в одной строке flex */
+}
+
+.small-btn {
+    padding: 4px 8px; /* Меньший padding для этой кнопки */
+    font-size: 0.8em;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.actions .button {
+    flex: 1 1 auto;
+    min-width: 90px;
+}

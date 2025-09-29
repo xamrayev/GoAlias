@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GoAlias - Сохранить страницу</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="window-frame popup-frame"> <!-- Главный контейнер окна -->
+        <div class="window-header">
+            <h1 id="popupTitle">🌐 GoAlias - Сохранить страницу</h1>
+        </div>
+        <div class="window-content">
+            <div class="form-group">
+                <label for="url">URL:</label>
+                <input type="text" id="url" readonly class="input">
+            </div>
+            <div class="form-group">
+                <label for="alias">Алиас:</label>
+                <input type="text" id="alias" placeholder="Например: my-dashboard" required class="input">
+                <small class="error-message" id="alias-error"></small>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" placeholder="Добавьте описание вручную" class="textarea"></textarea>
+            </div>
+            <div class="form-group keywords-group">
+                <label for="keywords">Ключевые слова (через запятую):</label>
+                <input type="text" id="keywords" placeholder="AI, page, docs" class="input">
+                <button id="generateAiButton" class="button button-secondary small-btn">🧠 Сгенерировать AI</button>
+            </div>
+            <div class="actions">
+                <button id="saveButton" class="button button-primary">✅ Сохранить</button>
+                <button id="updateButton" class="button button-primary" style="display:none;">🔄 Обновить</button>
+                <button id="deleteButton" class="button button-danger" style="display:none;">🗑️ Удалить</button>
+                <button id="manageButton" class="button button-secondary">⚙️ Управлять Алиасами</button>
+            </div>
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+    </div>
+    <script src="popup.js" type="module"></script>
+</body>
+</html>
