@@ -16,7 +16,7 @@ function showToast(message, type = 'success') {
       <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
     </svg>`,
     info: `<svg style="color: #3b82f6;" viewBox="0 0 24 24">
-      <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      <path d="M13 16h-1v-4m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
     </svg>`
   };
   
@@ -97,8 +97,18 @@ function showLoading(show = true) {
 }
 
 // Create table row
-function createTableRow(alias, url) {
-  const isDuplicate = Object.values(allData).filter(u => u === url).length > 1;
+function createTableRow(alias, data) {
+  // Support both old format (just URL) and new format (object)
+  const url = typeof data === 'string' ? data : data.url;
+  const description = typeof data === 'object' ? data.description : '';
+  const created = typeof data === 'object' ? data.created : Date.now();
+  
+  // Check for duplicate URLs
+  const isDuplicate = Object.values(allData).filter(d => {
+    const u = typeof d === 'string' ? d : d.url;
+    return u === url;
+  }).length > 1;
+  
   const isSelected = selectedItems.has(alias);
   
   const row = document.createElement('div');
@@ -128,7 +138,13 @@ function createTableRow(alias, url) {
           type="text" 
           value="${url}" 
           class="urlInput table-input"
+          style="margin-bottom: 4px;"
         />
+        <textarea 
+          class="descInput table-input" 
+          placeholder="Add description (helps with AI search)..."
+          style="min-height: 60px; resize: vertical; font-size: 12px;"
+        >${description}</textarea>
         <div class="url-domain">${domain}</div>
       </div>
       
@@ -174,7 +190,13 @@ function createTableRow(alias, url) {
           type="text" 
           value="${url}" 
           class="urlInput table-input"
+          style="margin-bottom: 4px;"
         />
+        <textarea 
+          class="descInput table-input" 
+          placeholder="Add description (helps with AI search)..."
+          style="min-height: 60px; resize: vertical; font-size: 12px;"
+        >${description}</textarea>
         <div class="url-domain">Invalid URL</div>
       </div>
       
@@ -229,8 +251,8 @@ function renderTable(data) {
   const sortedEntries = entries.sort((a, b) => a[0].localeCompare(b[0]));
   
   // Add rows
-  sortedEntries.forEach(([alias, url]) => {
-    const row = createTableRow(alias, url);
+  sortedEntries.forEach(([alias, data]) => {
+    const row = createTableRow(alias, data);
     tableBody.appendChild(row);
   });
   
@@ -260,14 +282,19 @@ function attachRowEventListeners() {
   
   // Input blur handlers for auto-save
   tableBody.addEventListener('blur', async (e) => {
-    if (e.target.classList.contains('aliasInput') || e.target.classList.contains('urlInput')) {
+    if (e.target.classList.contains('aliasInput') || 
+        e.target.classList.contains('urlInput') || 
+        e.target.classList.contains('descInput')) {
+      
       const row = e.target.closest('[data-alias]');
       const originalAlias = row.dataset.alias;
       const aliasInput = row.querySelector('.aliasInput');
       const urlInput = row.querySelector('.urlInput');
+      const descInput = row.querySelector('.descInput');
       
       const newAlias = aliasInput.value.trim();
       const newUrl = urlInput.value.trim();
+      const newDesc = descInput.value.trim();
       
       if (!newAlias || !newUrl) {
         showToast('Alias and URL cannot be empty', 'error');
@@ -289,8 +316,20 @@ function attachRowEventListeners() {
           selectedItems.add(newAlias);
         }
         
-        // Save new data
-        await chrome.storage.local.set({ [newAlias]: newUrl });
+        // Get old data to preserve metadata
+        const oldData = allData[originalAlias];
+        const created = typeof oldData === 'object' ? oldData.created : Date.now();
+        
+        // Save new data with description
+        await chrome.storage.local.set({ 
+          [newAlias]: {
+            url: newUrl,
+            description: newDesc,
+            created: created,
+            updated: Date.now()
+          }
+        });
+        
         showToast('Saved successfully!');
         loadAliases();
         
@@ -309,6 +348,7 @@ function attachRowEventListeners() {
     const alias = row.dataset.alias;
     const urlInput = row.querySelector('.urlInput');
     const aliasInput = row.querySelector('.aliasInput');
+    const descInput = row.querySelector('.descInput');
     
     if (e.target.closest('.generateBtn')) {
       if (!urlInput.value.trim()) {
@@ -330,7 +370,18 @@ function attachRowEventListeners() {
         
         // Remove old alias and add new one
         await chrome.storage.local.remove(alias);
-        await chrome.storage.local.set({ [aiAlias]: urlInput.value.trim() });
+        
+        const oldData = allData[alias];
+        const created = typeof oldData === 'object' ? oldData.created : Date.now();
+        
+        await chrome.storage.local.set({ 
+          [aiAlias]: {
+            url: urlInput.value.trim(),
+            description: descInput.value.trim(),
+            created: created,
+            updated: Date.now()
+          }
+        });
         
         showLoading(false);
         showToast(`AI alias generated: ${aiAlias}`);
@@ -343,7 +394,9 @@ function attachRowEventListeners() {
     }
     
     else if (e.target.closest('.visitBtn')) {
-      chrome.tabs.create({ url: urlInput.value });
+      const data = allData[alias];
+      const url = typeof data === 'string' ? data : data.url;
+      chrome.tabs.create({ url });
     }
     
     else if (e.target.closest('.deleteBtn')) {
@@ -377,6 +430,10 @@ function updateBulkActions() {
 // Load all aliases
 function loadAliases() {
   chrome.storage.local.get(null, (data) => {
+    // Remove internal keys
+    delete data._stats;
+    delete data._metadata;
+    
     allData = data;
     renderTable(data);
   });
@@ -403,9 +460,14 @@ function exportData(selectedOnly = false) {
 document.getElementById("searchInput").addEventListener("input", (e) => {
   const query = e.target.value.toLowerCase();
   const filtered = Object.fromEntries(
-    Object.entries(allData).filter(([alias, url]) => 
-      alias.toLowerCase().includes(query) || url.toLowerCase().includes(query)
-    )
+    Object.entries(allData).filter(([alias, data]) => {
+      const url = typeof data === 'string' ? data : data.url;
+      const description = typeof data === 'object' ? data.description : '';
+      
+      return alias.toLowerCase().includes(query) || 
+             url.toLowerCase().includes(query) ||
+             description.toLowerCase().includes(query);
+    })
   );
   renderTable(filtered);
 });

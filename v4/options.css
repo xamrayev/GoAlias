@@ -1,0 +1,362 @@
+/* options.css */
+
+/* --- Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'IBM Plex Mono', monospace;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNCIgaGVpZ2h0PSI0IiB2aWV3Qm94PSIwIDAgNCA0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiNkYmRiZGIiIGZpbGwtb3BhY2l0eT0iMC41Ij48cGF0aCBkPSJNMCAxIEgxVjBoM3YxSDJWNHYtMUgxdi0yaDJWM0gyVjJINHYyek0yIDJIN3Y3SDF2LTRINHYtMUg3VjJoLTJWLTFINFYzeSINCmQ9Ik0wIDFoMVYwaDNWMUgyVjR2LTFIMXYtMmgzVjNIMlYySDR2MXoiLz48L2c+PC9zdmc+');
+}
+
+/* --- Главный контейнер --- */
+.sketchy-container {
+    background-color: #ffffff;
+    border: 1px solid #000;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-width: 900px; /* Для страницы опций */
+    margin: 20px auto; /* Центрирование */
+}
+
+.sketchy-header {
+    background-color: #e0e0e0;
+    border-bottom: 1px solid #000;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sketchy-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
+    color: #333;
+}
+
+.sketchy-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* --- Toolbar --- */
+.sketchy-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #000;
+    box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.sketchy-toolbar-group {
+    display: flex;
+    gap: 8px;
+}
+
+.sketchy-filter-input {
+    flex-grow: 1;
+    min-width: 200px;
+    padding: 8px;
+    border: 1px solid #000;
+    background-color: #ffffff;
+    color: #333;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.1s ease-out;
+}
+.sketchy-filter-input:focus {
+    box-shadow: 2px 2px 0px 0px #000;
+    transform: translate(-1px, -1px);
+}
+
+/* --- Элементы формы --- */
+.sketchy-form-group {
+    margin-bottom: 5px;
+}
+
+.sketchy-label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.sketchy-input,
+.sketchy-textarea {
+    width: calc(100% - 18px); /* Padding + border */
+    padding: 8px;
+    border: 1px solid #000;
+    background-color: #ffffff;
+    color: #333;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.1s ease-out;
+}
+
+.sketchy-input:focus,
+.sketchy-textarea:focus {
+    box-shadow: 2px 2px 0px 0px #000;
+    transform: translate(-1px, -1px);
+}
+
+.sketchy-input[readonly] {
+    background-color: #f5f5f5;
+    color: #666;
+}
+
+.sketchy-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* --- Кнопки --- */
+.sketchy-button {
+    min-width: 80px;
+    padding: 8px 12px;
+    border: 1px solid #000;
+    background-color: #e0e0e0;
+    color: #333;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+    box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.2);
+    transition: background-color 0.1s ease-out, box-shadow 0.1s ease-out, transform 0.1s ease-out;
+}
+
+.sketchy-button:hover {
+    background-color: #d0d0d0;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.3);
+}
+
+.sketchy-button:active {
+    background-color: #c0c0c0;
+    box-shadow: inset 1px 1px 0px 0px rgba(0,0,0,0.2);
+    transform: translate(1px, 1px);
+}
+
+.sketchy-button:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.sketchy-button-primary {
+    background-color: #333;
+    color: #fff;
+}
+.sketchy-button-primary:hover { background-color: #555; }
+.sketchy-button-primary:active { background-color: #111; }
+
+.sketchy-button-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.sketchy-button-text {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    color: #333;
+    text-decoration: underline;
+    padding: 8px;
+}
+.sketchy-button-text:hover { background-color: #e0e0e0; text-decoration: none; }
+.sketchy-button-text:active { background-color: #d0d0d0; text-decoration: none; transform: none; }
+
+.sketchy-icon-button { /* Для иконок в карточках */
+    padding: 4px;
+    min-width: unset;
+    box-shadow: none;
+}
+.sketchy-icon-button:hover {
+    background-color: #e0e0e0;
+}
+
+
+/* --- Status Messages --- */
+.sketchy-error-message {
+    color: #cc0000;
+    font-size: 0.8em;
+    margin-top: 2px;
+    display: block;
+}
+
+.sketchy-status-message {
+    padding: 8px 12px;
+    border: 1px solid #000;
+    background-color: #e0e0e0;
+    font-size: 0.8em;
+    text-align: center;
+    margin-top: 10px;
+    box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.2);
+}
+
+.sketchy-status-info {
+    border-color: #000080;
+    color: #000080;
+}
+
+.sketchy-status-success {
+    border-color: #008000;
+    color: #008000;
+}
+
+.sketchy-status-error {
+    border-color: #800000;
+    color: #800000;
+}
+
+/* --- Bento Grid Layout --- */
+.sketchy-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 8px 0;
+    margin-top: 10px;
+}
+
+.sketchy-bento-card {
+    background-color: #ffffff;
+    border: 1px solid #000;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 180px;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+
+.sketchy-bento-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.3);
+}
+
+.sketchy-card-header {
+    background-color: #e0e0e0;
+    border-bottom: 1px solid #000;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.sketchy-alias-name {
+    font-weight: 700;
+    color: #333;
+}
+
+.sketchy-card-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.sketchy-card-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #333;
+}
+
+.sketchy-alias-url {
+    font-size: 0.9rem;
+    color: #007bff; /* Стандартная синяя ссылка */
+    text-decoration: underline;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sketchy-alias-url:hover {
+    text-decoration: none;
+}
+
+.sketchy-card-body p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+/* Эмодзи для иконок статистики */
+.sketchy-alias-description::before { content: "📊 "; color: #333; font-weight: bold; }
+.sketchy-alias-keywords::before { content: "🏷️ "; color: #333; font-weight: bold; }
+.sketchy-alias-tags::before { content: "# "; color: #333; font-weight: bold; }
+.sketchy-alias-stats::before { content: "📈 "; color: #333; font-weight: bold; }
+
+
+/* --- Стили для модального окна (Dialog) --- */
+.sketchy-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.sketchy-dialog-frame {
+  width: 400px;
+  min-width: 300px;
+  max-width: 90%;
+  margin: 0;
+}
+
+.sketchy-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #e0e0e0;
+  border-bottom: 1px solid #000;
+}
+
+.sketchy-dialog-content {
+  padding: 15px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sketchy-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #000;
+}
