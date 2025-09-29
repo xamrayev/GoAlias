@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GoAlias - Управление Алиасами</title>
+    <link rel="stylesheet" href="options.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="fuse.min.js"></script>
+</head>
+<body>
+    <div class="sketchy-container options-container">
+        <header class="sketchy-header">
+            <h1 class="sketchy-title">🎯 GoAlias Manager</h1>
+        </header>
+        <div class="sketchy-content">
+            <div class="sketchy-toolbar">
+                <input type="text" id="filterInput" placeholder="Поиск по алиасу, описанию, URL..." class="sketchy-input sketchy-filter-input">
+                <div class="sketchy-toolbar-group">
+                    <button id="syncBookmarksButton" class="sketchy-button sketchy-button-secondary">🔗 Синхронизировать закладки</button>
+                    <button id="generateAllAiKeywordsButton" class="sketchy-button sketchy-button-secondary">🧠 AI-ключи для всех закладок</button>
+                    <button id="exportButton" class="sketchy-button sketchy-button-secondary">Экспорт JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <button id="importButton" class="sketchy-button sketchy-button-secondary">Импорт JSON</button>
+                    <button id="deleteAllButton" class="sketchy-button sketchy-button-danger">🔥 Удалить ВСЁ</button>
+                </div>
+            </div>
+
+            <div class="sketchy-folder-filters">
+                <span class="sketchy-label" style="margin-right: 8px;">Фильтр по папке:</span>
+                <div id="folderFilterButtons" class="sketchy-filter-button-group">
+                    <button class="sketchy-button sketchy-button-secondary active" data-folder-path="all">Все</button>
+                </div>
+                <button id="toggleDeleteFolderModeButton" class="sketchy-button sketchy-button-text">🗑️ Удалить папки</button>
+                <span id="totalAliasesCount" class="sketchy-statistic-display">Всего алиасов: 0</span>
+            </div>
+
+            <!-- НОВЫЙ БЛОК ДЛЯ СТАТИСТИКИ OMNIBOX -->
+            <div class="sketchy-statistics-section">
+                <h2 class="sketchy-subtitle">📊 Статистика Omnibox</h2>
+                <div class="sketchy-stats-grid">
+                    <div class="sketchy-stat-item">
+                        <span class="sketchy-stat-label">Всего переходов:</span>
+                        <span id="statTotalLaunches" class="sketchy-stat-value">0</span>
+                    </div>
+                    <div class="sketchy-stat-item">
+                        <span class="sketchy-stat-label">Прямой Alias:</span>
+                        <span id="statDirectAliasLaunches" class="sketchy-stat-value">0</span>
+                    </div>
+                    <div class="sketchy-stat-item">
+                        <span class="sketchy-stat-label">Fuzzy Поиск:</span>
+                        <span id="statFuzzySearchLaunches" class="sketchy-stat-value">0</span>
+                    </div>
+                    <div class="sketchy-stat-item">
+                        <span class="sketchy-stat-label">AI Поиск:</span>
+                        <span id="statAiSearchLaunches" class="sketchy-stat-value">0</span>
+                    </div>
+                    <!-- Smart Search не является прямым методом запуска, он рулит на другие. -->
+                    <!-- <div class="sketchy-stat-item">
+                        <span class="sketchy-stat-label">Smart Поиск:</span>
+                        <span id="statSmartSearchLaunches" class="sketchy-stat-value">0</span>
+                    </div> -->
+                    <div class="sketchy-stat-item">
+                        <span class="sketchy-stat-label">Fallback Google:</span>
+                        <span id="statGoogleFallbackLaunches" class="sketchy-stat-value">0</span>
+                    </div>
+                </div>
+                <button id="resetStatsButton" class="sketchy-button sketchy-button-text" style="color: #666;">Сбросить статистику</button>
+            </div>
+            <!-- КОНЕЦ НОВОГО БЛОКА -->
+
+
+            <div id="statusMessage" class="sketchy-status-message" style="display: none;"></div>
+            
+            <div id="aliasesList" class="sketchy-bento-grid">
+                <p id="loadingMessage" class="sketchy-status-message sketchy-status-info">Загрузка алиасов...</p>
+            </div>
+
+            <div id="noAliasesMessage" class="sketchy-status-message sketchy-status-info" style="display: none;">
+                Пока нет сохраненных алиасов. Нажмите на иконку GoAlias, чтобы добавить первый!
+            </div>
+
+            <!-- Edit Alias Dialog (Modal) - БЕЗ ИЗМЕНЕНИЙ -->
+            <div id="editModal" class="sketchy-dialog-overlay" style="display: none;">
+                <div class="sketchy-container sketchy-dialog-frame">
+                    <header class="sketchy-header sketchy-dialog-header">
+                        <h2 class="sketchy-title">Редактировать Алиас</h2>
+                        <button class="sketchy-button sketchy-button-secondary sketchy-dialog-close-button" style="font-size: 1.2em; padding: 2px 6px;">✖</button>
+                    </header>
+                    <div class="sketchy-content sketchy-dialog-content">
+                        <div class="sketchy-status-message sketchy-status-error" id="editError" style="display:none;"></div>
+                        <div class="sketchy-form-group">
+                            <label for="editAliasName" class="sketchy-label">Алиас:</label>
+                            <input type="text" id="editAliasName" class="sketchy-input" readonly>
+                        </div>
+                        <div class="sketchy-form-group">
+                            <label for="editUrl" class="sketchy-label">URL:</label>
+                            <input type="text" id="editUrl" class="sketchy-input">
+                        </div>
+                        <div class="sketchy-form-group">
+                            <label for="editDescription" class="sketchy-label">Описание:</label>
+                            <textarea id="editDescription" class="sketchy-textarea"></textarea>
+                        </div>
+                        <div class="sketchy-form-group sketchy-keywords-group">
+                            <label for="editKeywords" class="sketchy-label">Ключевые слова (через запятую):</label>
+                            <input type="text" id="editKeywords" class="sketchy-input">
+                            <button id="generateAiKeywordsForEdit" class="sketchy-button sketchy-button-secondary small-btn">🧠 AI</button>
+                            <span id="aiKeywordsLoadingIndicator" class="loading-indicator" style="display: none;"></span>
+                        </div>
+                        <div class="sketchy-form-group">
+                            <label for="editTags" class="sketchy-label">Теги (через запятую):</label>
+                            <input type="text" id="editTags" class="sketchy-input">
+                        </div>
+                        <div class="sketchy-form-group">
+                            <label for="editSource" class="sketchy-label">Источник:</label>
+                            <input type="text" id="editSource" class="sketchy-input" readonly>
+                        </div>
+                        <div class="sketchy-form-group">
+                            <label for="editBookmarkPath" class="sketchy-label">Путь закладки:</label>
+                            <input type="text" id="editBookmarkPath" class="sketchy-input" readonly>
+                        </div>
+                    </div>
+                    <div class="sketchy-dialog-actions">
+                        <button class="sketchy-button sketchy-button-secondary sketchy-dialog-close-button">Отмена</button>
+                        <button id="saveEditButton" class="sketchy-button sketchy-button-primary">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="fuse.min.js"></script>
+    <script src="options.js" type="module"></script>
+</body>
+</html>

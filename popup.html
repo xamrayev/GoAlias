@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GoAlias - Сохранить страницу</title>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sketchy-container">
+        <header class="sketchy-header">
+            <h1 id="popupTitle" class="sketchy-title">🌐 GoAlias - Сохранить страницу</h1>
+        </header>
+        <div class="sketchy-content">
+            <div class="sketchy-form-group">
+                <label for="url" class="sketchy-label">URL:</label>
+                <input type="text" id="url" readonly class="sketchy-input">
+            </div>
+            <div class="sketchy-form-group">
+                <label for="alias" class="sketchy-label">Алиас:</label>
+                <input type="text" id="alias" placeholder="Например: my-dashboard" required class="sketchy-input">
+                <small class="sketchy-error-message" id="alias-error"></small>
+            </div>
+            <div class="sketchy-form-group">
+                <label for="description" class="sketchy-label">Описание:</label>
+                <textarea id="description" placeholder="Добавьте описание вручную" class="sketchy-textarea"></textarea>
+            </div>
+            <div class="sketchy-form-group sketchy-keywords-group">
+                <label for="keywords" class="sketchy-label">Ключевые слова (через запятую):</label>
+                <input type="text" id="keywords" placeholder="AI, page, docs" class="sketchy-input">
+                <button id="generateAiButton" class="sketchy-button sketchy-button-secondary">🧠 Сгенерировать AI</button>
+                <span id="aiLoadingIndicator" class="loading-indicator" style="display: none;"></span> <!-- НОВЫЙ ЭЛЕМЕНТ -->
+            </div>
+            <div class="sketchy-actions">
+                <button id="saveButton" class="sketchy-button sketchy-button-primary">✅ Сохранить</button>
+                <button id="updateButton" class="sketchy-button sketchy-button-primary" style="display:none;">🔄 Обновить</button>
+                <button id="deleteButton" class="sketchy-button sketchy-button-text" style="display:none;">🗑️ Удалить</button>
+                <button id="manageButton" class="sketchy-button sketchy-button-text">⚙️ Управлять Алиасами</button>
+            </div>
+            <div id="statusMessage" class="sketchy-status-message"></div>
+        </div>
+    </div>
+    <script src="popup.js" type="module"></script>
+</body>
+</html>
