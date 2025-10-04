@@ -10,18 +10,18 @@
 <body>
     <div class="sketchy-container options-container">
         <header class="sketchy-header">
-            <h1 class="sketchy-title">🎯 GoAlias Manager</h1>
+            <h1 class="sketchy-title">Панель управления Алиасами</h1>
         </header>
         <div class="sketchy-content">
             <div class="sketchy-toolbar">
                 <input type="text" id="filterInput" placeholder="Поиск по алиасу, описанию, URL..." class="sketchy-input sketchy-filter-input">
                 <div class="sketchy-toolbar-group">
-                    <button id="syncBookmarksButton" class="sketchy-button sketchy-button-secondary">🔗 Синхронизировать закладки</button>
-                    <button id="generateAllAiKeywordsButton" class="sketchy-button sketchy-button-secondary">🧠 AI-ключи для всех закладок</button>
+                    <button id="syncBookmarksButton" class="sketchy-button sketchy-button-secondary">Синхронизировать закладки</button>
+                    <button id="generateAllAiKeywordsButton" class="sketchy-button sketchy-button-secondary">AI-ключи для всех закладок</button>
                     <button id="exportButton" class="sketchy-button sketchy-button-secondary">Экспорт JSON</button>
                     <input type="file" id="importFile" accept=".json" style="display: none;">
                     <button id="importButton" class="sketchy-button sketchy-button-secondary">Импорт JSON</button>
-                    <button id="deleteAllButton" class="sketchy-button sketchy-button-danger">🔥 Удалить ВСЁ</button>
+                    <button id="deleteAllButton" class="sketchy-button sketchy-button-danger">Удалить ВСЁ</button>
                 </div>
             </div>
 
@@ -30,13 +30,13 @@
                 <div id="folderFilterButtons" class="sketchy-filter-button-group">
                     <button class="sketchy-button sketchy-button-secondary active" data-folder-path="all">Все</button>
                 </div>
-                <button id="toggleDeleteFolderModeButton" class="sketchy-button sketchy-button-text">🗑️ Удалить папки</button>
+                <button id="toggleDeleteFolderModeButton" class="sketchy-button sketchy-button-text">Удалить папки</button>
                 <span id="totalAliasesCount" class="sketchy-statistic-display">Всего алиасов: 0</span>
             </div>
 
             <!-- НОВЫЙ БЛОК ДЛЯ СТАТИСТИКИ OMNIBOX -->
             <div class="sketchy-statistics-section">
-                <h2 class="sketchy-subtitle">📊 Статистика Omnibox</h2>
+                <h2 class="sketchy-subtitle">Статистика Omnibox</h2>
                 <div class="sketchy-stats-grid">
                     <div class="sketchy-stat-item">
                         <span class="sketchy-stat-label">Всего переходов:</span>
