@@ -1,19 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "GoAlias",
-  "version": "1.0.0", 
-  "description": "Превращает адресную строку в интеллектуальную систему навигации с алиасами, AI- и fuzzy-поиском.",
+  "name": "__MSG_extensionName__",
+  "version": "2.0.0",
+  "description": "__MSG_extensionDescription__", 
   "icons": {
-    "16": "icons/icon128.png",
-    "32": "icons/icon128.png",
-    "48": "icons/icon128.png",
     "128": "icons/icon128.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/icon128.png",
-      "32": "icons/icon128.png"
+      "128": "icons/icon128.png"
     }
   },
   "omnibox": {
@@ -24,7 +20,7 @@
     "activeTab",
     "storage",
     "scripting",
-    "bookmarks" 
+    "bookmarks"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -44,5 +40,6 @@
       "resources": ["*.js", "icons/*"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "default_locale": "en" 
 }

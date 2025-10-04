@@ -1,6 +1,32 @@
 // popup.js
 
+import { debounce } from './utils.js';
+
+// Вспомогательная функция для применения i18n к статическим элементам HTML
+function applyI18n() {
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.dataset.i18n;
+        element.textContent = chrome.i18n.getMessage(key);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.dataset.i18nPlaceholder; // Исправлено: camelCase
+        element.placeholder = chrome.i18n.getMessage(key);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(element => {
+        const key = element.dataset.i18nTitle; // Исправлено: camelCase
+        element.title = chrome.i18n.getMessage(key);
+    });
+    // Для <title> в head
+    const titleElement = document.querySelector('head title');
+    if (titleElement && titleElement.dataset.i18n) {
+        titleElement.textContent = chrome.i18n.getMessage(titleElement.dataset.i18n);
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
+    applyI18n(); // <-- Применяем переводы сразу после загрузки DOM
+
     const popupTitle = document.getElementById('popupTitle');
     const urlInput = document.getElementById('url');
     const aliasInput = document.getElementById('alias');
@@ -11,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const deleteButton = document.getElementById('deleteButton');
     const manageButton = document.getElementById('manageButton');
     const generateAiButton = document.getElementById('generateAiButton');
-    const aiLoadingIndicator = document.getElementById('aiLoadingIndicator'); // НОВЫЙ ЭЛЕМЕНТ
+    const aiLoadingIndicator = document.getElementById('aiLoadingIndicator');
     const statusMessage = document.getElementById('statusMessage');
     const aliasError = document.getElementById('alias-error');
 
@@ -20,7 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let existingAliasData = null;
 
     const updateUIForExistingAlias = (aliasKey, aliasData) => {
-        popupTitle.textContent = `🌐 GoAlias - Изменить алиас "${aliasKey}"`;
+        // Используем getMessage с параметром %s
+        popupTitle.textContent = chrome.i18n.getMessage("popupTitleEditAlias", [aliasKey]);
         aliasInput.value = aliasKey;
         descriptionInput.value = aliasData.description || '';
         keywordsInput.value = aliasData.keywords.join(', ') || '';
@@ -29,12 +56,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateButton.style.display = 'inline-block';
         deleteButton.style.display = 'inline-block';
         
-        statusMessage.textContent = `Страница уже сохранена как "${aliasKey}". Вы можете обновить или удалить.`;
+        statusMessage.textContent = chrome.i18n.getMessage("statusPageSavedAs", [aliasKey]);
         statusMessage.className = 'sketchy-status-message sketchy-status-info';
     };
 
     const updateUIForNewAlias = () => {
-        popupTitle.textContent = '🌐 GoAlias - Сохранить страницу';
+        popupTitle.textContent = chrome.i18n.getMessage("popupTitleSavePage");
         aliasInput.value = '';
         descriptionInput.value = currentTab.title || '';
         keywordsInput.value = '';
@@ -43,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateButton.style.display = 'none';
         deleteButton.style.display = 'none';
 
-        statusMessage.textContent = 'Введите алиас или нажмите "Сгенерировать AI".';
+        statusMessage.textContent = chrome.i18n.getMessage("statusEnterAliasOrGenerate");
         statusMessage.className = 'sketchy-status-message sketchy-status-info';
     };
 
@@ -69,20 +96,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         
     } catch (error) {
         console.error('Error fetching tab info or aliases:', error);
-        statusMessage.textContent = `Критическая ошибка: ${error.message}.`;
+        statusMessage.textContent = chrome.i18n.getMessage("statusCriticalError", [error.message]);
         statusMessage.className = 'sketchy-status-message sketchy-status-error';
-        descriptionInput.value = 'Ошибка загрузки контента. Введите описание вручную.';
-        urlInput.value = 'Не удалось получить URL.';
+        descriptionInput.value = chrome.i18n.getMessage("placeholderDescription");
+        urlInput.value = chrome.i18n.getMessage("statusErrorURL"); // Хотя это readonly, можно показать сообщение
     }
 
     generateAiButton.addEventListener('click', async () => {
         if (!currentTab) {
-            statusMessage.textContent = 'Не удалось получить текущую вкладку.';
+            statusMessage.textContent = chrome.i18n.getMessage("statusCriticalError", [chrome.i18n.getMessage("noCurrentTabError")]); // Адаптировать текст ошибки
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
             return;
         }
 
-        statusMessage.textContent = 'Генерация алиаса и ключевых слов с помощью AI...';
+        generateAiButton.textContent = chrome.i18n.getMessage("buttonGenerating");
+        statusMessage.textContent = chrome.i18n.getMessage("statusGeneratingAI");
         statusMessage.className = 'sketchy-status-message sketchy-status-info';
         generateAiButton.disabled = true;
         aiLoadingIndicator.style.display = 'inline-block';
@@ -90,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await chrome.runtime.sendMessage({
                 action: 'generateContentForPopup',
-                tabId: currentTab.id, // <-- ИСПРАВЛЕНО: передаем tab.id для content script
+                tabId: currentTab.id,
                 url: currentTab.url,
                 title: currentTab.title
             });
@@ -99,54 +127,50 @@ document.addEventListener('DOMContentLoaded', async () => {
                 keywordsInput.value = response.keywords.join(', ');
                 aliasInput.value = response.suggestedAlias;
                 
-                statusMessage.textContent = 'Алиас и ключевые слова сгенерированы AI!';
+                statusMessage.textContent = chrome.i18n.getMessage("statusAIReady");
                 statusMessage.className = 'sketchy-status-message sketchy-status-success';
             } else {
                 console.error('Failed to generate AI content:', response.error);
                 keywordsInput.value = '';
                 aliasInput.value = '';
-                statusMessage.textContent = `Ошибка AI: ${response?.error || 'неизвестная ошибка'}. Введите алиас и ключевые слова вручную.`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusAIError", [response.error || 'unknown error']);
                 statusMessage.className = 'sketchy-status-message sketchy-status-error';
             }
         } catch (error) {
             console.error('Error during AI generation:', error);
-            statusMessage.textContent = `Непредвиденная ошибка AI: ${error.message}.`;
+            statusMessage.textContent = chrome.i18n.getMessage("statusUnexpectedError", [error.message]);
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
         } finally {
             generateAiButton.disabled = false;
+            generateAiButton.textContent = chrome.i18n.getMessage("buttonGenerateAI");
             aiLoadingIndicator.style.display = 'none';
         }
     });
 
-
-
-    // --- Generic validation function ---
     const validateInputs = async (alias) => {
         aliasError.textContent = '';
         if (!alias) {
-            aliasError.textContent = 'Алиас не может быть пустым.';
+            aliasError.textContent = chrome.i18n.getMessage("errorAliasEmpty");
             return false;
         }
         if (!/^[a-zA-Z0-9_-]+$/.test(alias)) {
-            aliasError.textContent = 'Алиас может содержать только латинские буквы, цифры, дефисы и подчеркивания.';
+            aliasError.textContent = chrome.i18n.getMessage("errorAliasInvalidChars");
             return false;
         }
         if (!urlInput.value.trim()) {
-            statusMessage.textContent = 'URL не может быть пустым.';
+            statusMessage.textContent = chrome.i18n.getMessage("statusErrorURL");
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
             return false;
         }
 
         const aliases = await chrome.runtime.sendMessage({ action: 'getAliases' });
         if (aliases[alias] && alias !== existingAliasKey) { 
-            aliasError.textContent = `Алиас "${alias}" уже существует. Выберите другой.`;
+            aliasError.textContent = chrome.i18n.getMessage("statusAliasExists", [alias]);
             return false;
         }
         return true;
     };
 
-
-    // --- Save Button Logic ---
     saveButton.addEventListener('click', async () => {
         const alias = aliasInput.value.trim();
         if (!(await validateInputs(alias))) return;
@@ -164,21 +188,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await chrome.runtime.sendMessage({ action: 'saveAlias', alias, data });
             if (response.success) {
-                statusMessage.textContent = `Алиас "${alias}" успешно сохранен!`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusAliasSaved", [alias]);
                 statusMessage.className = 'sketchy-status-message sketchy-status-success';
                 setTimeout(() => window.close(), 1500);
             } else {
-                statusMessage.textContent = `Ошибка сохранения: ${response.error}`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusSaveError", [response.error]);
                 statusMessage.className = 'sketchy-status-message sketchy-status-error';
             }
         } catch (error) {
             console.error('Error saving alias:', error);
-            statusMessage.textContent = `Непредвиденная ошибка: ${error.message}`;
+            statusMessage.textContent = chrome.i18n.getMessage("statusUnexpectedError", [error.message]);
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
         }
     });
 
-    // --- Update Button Logic ---
     updateButton.addEventListener('click', async () => {
         const alias = aliasInput.value.trim();
         if (!(await validateInputs(alias))) return;
@@ -203,26 +226,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await chrome.runtime.sendMessage({ action: action, alias: alias, data: data });
 
             if (response.success) {
-                statusMessage.textContent = `Алиас "${alias}" успешно обновлен!`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusAliasUpdated", [alias]);
                 statusMessage.className = 'sketchy-status-message sketchy-status-success';
                 existingAliasKey = alias;
                 existingAliasData = data;
                 updateUIForExistingAlias(existingAliasKey, existingAliasData);
             } else {
-                statusMessage.textContent = `Ошибка обновления: ${response.error}`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusUpdateError", [response.error]);
                 statusMessage.className = 'sketchy-status-message sketchy-status-error';
             }
         } catch (error) {
             console.error('Error updating alias:', error);
-            statusMessage.textContent = `Непредвиденная ошибка: ${error.message}`;
+            statusMessage.textContent = chrome.i18n.getMessage("statusUnexpectedError", [error.message]);
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
         }
     });
 
-    // --- Delete Button Logic ---
     deleteButton.addEventListener('click', async () => {
         if (!existingAliasKey) {
-            statusMessage.textContent = 'Нет алиаса для удаления.';
+            statusMessage.textContent = chrome.i18n.getMessage("statusNoAliasToDelete");
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
             return;
         }
@@ -230,23 +252,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await chrome.runtime.sendMessage({ action: 'deleteAlias', alias: existingAliasKey });
             if (response.success) {
-                statusMessage.textContent = `Алиас "${existingAliasKey}" успешно удален!`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusAliasDeleted", [existingAliasKey]);
                 statusMessage.className = 'sketchy-status-message sketchy-status-success';
                 existingAliasKey = null;
                 existingAliasData = null;
                 updateUIForNewAlias();
             } else {
-                statusMessage.textContent = `Ошибка удаления: ${response.error}`;
+                statusMessage.textContent = chrome.i18n.getMessage("statusDeleteError", [response.error]);
                 statusMessage.className = 'sketchy-status-message sketchy-status-error';
             }
         } catch (error) {
             console.error('Error deleting alias:', error);
-            statusMessage.textContent = `Непредвиденная ошибка: ${error.message}`;
+            statusMessage.textContent = chrome.i18n.getMessage("statusUnexpectedError", [error.message]);
             statusMessage.className = 'sketchy-status-message sketchy-status-error';
         }
     });
 
-    // --- Manage Aliases Button Logic ---
     manageButton.addEventListener('click', async () => {
         await chrome.runtime.sendMessage({ action: 'openOptionsPage' });
     });
